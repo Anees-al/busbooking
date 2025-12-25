@@ -12,10 +12,12 @@ User login with JWT authentication Secure password storing with bcrypt
 
 Mobile responsive using tailwind CSS
 
+Listing Buses by Operators and route
+
 
 ## Tech Stack
 
-Frontend: React, Tailwind CSS.
+Frontend: React, Tailwind CSS.Framer Motion
 
 Backend: Node.js, Express.js.
 
