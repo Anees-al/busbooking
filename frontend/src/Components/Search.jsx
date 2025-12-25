@@ -7,7 +7,7 @@ const Search = () => {
     <div
       style={{
         backgroundImage: `url(${busimage})`,
-        backgroundSize: 'cover',
+    backgroundSize:     'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}

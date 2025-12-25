@@ -72,7 +72,7 @@ const Login = () => {
                    <hr  className='mt-2 border border-gray-300 w-[300px] border-center ml-5'/>
 
 
-                   <form className='flex flex-col gap-3 px-5 py-2' onSubmit={handleSubmit}>
+                   <form className='flex flex-col gap-3 px-5 py-2 bg-white' onSubmit={handleSubmit}>
                     {login==='login'?'':<input type="text"  placeholder='Full Name' name='fullname' value={formdata.fullname} className='p-2 w-[300px] border border-gray-500 rounded-sm t' onChange={handleInputChange} />}
                     <input type="email"  placeholder='Email Address' name='email' value={formdata.email} className='p-2 w-[300px] border border-gray-500 rounded-sm' onChange={handleInputChange} />
                     {login==='login'?'':<input type="tel"  name='phone' value={formdata.phone}  placeholder='Phone Number' className='p-2 w-[300px] border border-gray-500 rounded-sm' onChange={handleInputChange} />}
