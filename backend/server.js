@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import userRoute from './routes/userRoute.js'
+import busRoute from './routes/busRoute.js'
 
 import connectDb from './config/db.js';
 
@@ -25,6 +26,7 @@ app.use(cors({
 
 
 app.use('/api/user',userRoute)
+app.use('/api/bus',busRoute)
 
 
 
