@@ -7,39 +7,47 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
 
-import { useParams } from 'react-router-dom'
+
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useServer } from '../Context'
 const Buslist = () => {
 
+    const {server}=useServer()
 
-    const [buses,setBus]=useState([]);
+     const location=useLocation();
+     const navigate =useNavigate()
     const {routePath,busoperator}=useParams();
+    const [buses,setBus]=useState(location.state?.buses || []);
+    console.log("Navigation State:", location.state);
+   
+useEffect(() => {
+        // Only fetch from API if we DON'T have search results from the previous page
+        if (!location.state?.buses) {
+            const fetchBuses = async () => {
+                try {
+                    let url = "";
+                    if (routePath) {
+                        url = `/api/bus/getroutebybus/${routePath}`;
+                    } else if (busoperator) {
+                        url = `/api/bus/getbusesbyoperator/${busoperator}`;
+                    }
 
-
-    useEffect(()=>{
-        const fetchBuses=async()=>{
-            try {
-          let url = "";
-
-                
-                if (routePath) {
-                    url = `http://localhost:3000/api/bus/getroutebybus/${routePath}`;
-                } else if (busoperator) {
-                    url = `http://localhost:3000/api/bus/getbusesbyoperator/${busoperator}`;
+                    if (url) {
+                        const res = await server.get(url);
+                        // Make sure this matches your backend response key (res.data.buses or res.data.data)
+                        setBus(res.data.buses || res.data.data);
+                    }
+                } catch (error) {
+                    console.error("Fetch error:", error);
                 }
-
-                if (url) {
-                    const res = await axios.get(url);
-                    setBus(res.data.buses);
-                    console.log("Data fetched from:", url);
-                }
-            } catch (error) {
-                alert(error)
-            }
+            };
+            fetchBuses();
         }
-        fetchBuses();
-    },[routePath,busoperator])
+    }, [routePath, busoperator, location.state]);
 
-  
+    
+
+     
   return (
     <div>
         <Nav/>
@@ -160,28 +168,70 @@ const Buslist = () => {
 
 
                   <div className='flex flex-col p-5 sm:p-15 gap-5'>
-                    {buses.map((bus,index)=>(
-                        <motion.div className='flex flex-row h-auto sm:h-[270px] sm:w-[1000px] border border-orange-500 sm:border-none shadow-lg hover:shadow-orange-500 hover:shadow-md' initial={{x:-100,opacity:0}} whileInView={{x:0,opacity:1}} transition={{duration:0.5}}>
-                            <div className='flex bg-orange-500 h-full w-2 '></div>
-                            <div className='flex flex-col bg-white w-full h-full py-5 px-10'>
-                               <p className='text-2xl sm:text-xl text-center sm:text-start font-bold'>{bus.busname}</p>
-                               <p className='text-lg font-semibold text-red-600'>{bus.routePath}</p>
-                               <div className='flex flex-row text-sm text-gray-500 font-semibold mt-1'>
-                                <p className=''>{bus.bustype} |</p><p className='ml-1'> </p>
-                                {bus.isAC===true?<p>AC</p>:<p>NON-AC</p>}
-                               </div>
-                               <p className='flex flex-row gap-3 mt-2'>{bus.amenities.map(amt=>(
-                                <p className='flex px-1 py-1 bg-gray-100 rounded-lg text-gray-600 text-xs sm:text-md w-auto'>{amt}</p>
-                               ))}</p>
+                   {buses.length > 0 ? (
+    buses.map((bus, index) => (
+      <motion.div 
+        key={bus._id || index} 
+        className='flex flex-row h-auto sm:h-[300px] sm:w-[1000px] border border-orange-500 sm:border-none shadow-lg hover:shadow-orange-500 hover:shadow-md' 
+        initial={{x:-100, opacity:0}} 
+        whileInView={{x:0, opacity:1}} 
+        transition={{duration:0.5}}
+      >
+        <div className='flex bg-orange-500 h-full w-2 '></div>
+        <div className='flex flex-col bg-white w-full h-full py-5 px-10'>
+          <div className='flex flex-col  sm:flex-row justify-between p-2'>
+            <p className='text-2xl sm:text-xl text-center sm:text-start font-bold'>{bus.busname}</p>
+          <p className='text-xs font-semibold text-red-600'>{bus.routePath}</p>
+          </div>
+         
+          <p className='text-lg font-semibold text-red-600 uppercase mt-3'>
+        {location.state?.searchQuery 
+            ? `${location.state.searchQuery.from} ➔ ${location.state.searchQuery.destination}`
+            : bus.routePath}
+    </p>
+          
+          <div className='flex flex-row text-sm text-gray-500 font-semibold mt-1'>
+            <p className=''>{bus.bustype} |</p>
+            <p className='ml-1'>{bus.isAC ? 'AC' : 'NON-AC'}</p>
+          </div>
 
+          <div className='flex flex-row gap-3 mt-2 flex-wrap'>
+            {bus.amenities?.map((amt, i) => (
+              <p key={i} className='px-2 py-1 bg-gray-100 rounded-lg text-gray-600 text-xs w-auto'>
+                {amt}
+              </p>
+            ))}
+          </div>
 
-                               <p className='text-2xl font-semibold text-orange-500 mt-5'>₹ {bus.stops[bus.stops.length - 1]?.pricefromorgin}</p>
-                               <p className='text-lg font-semibold text-green-600'>{bus.totalseats - (bus.bookseats ? bus.bookseats.length : 0)} seats left</p>
+          {/* Optional Chaining for stops to prevent crash if stops is missing */}
+          <p className='text-2xl font-semibold text-orange-500 mt-5'>
+             ₹ {
+        // If it's a search, find the price for the specific destination searched
+        location.state?.searchQuery 
+        ? bus.stops.find(s => s.stationname === location.state.searchQuery.destination)?.pricefromorgin 
+          || bus.stops[bus.stops.length - 1]?.pricefromorgin // fallback to last stop
+        : bus.stops[bus.stops.length - 1]?.pricefromorgin // default for route links
+    }
+          </p>
+          
+          <p className='text-lg font-semibold text-green-600'>
+            {bus.totalseats - (bus.bookseats ? bus.bookseats.length : 0)} seats left
+          </p>
+          
 
-                               <button className='text-lg bg-blue-500 text-white  py-2 rounded-lg mb-5 font-semibold shadow-lg '>Book seats</button>
-                            </div>
-                        </motion.div>
-                    ))}
+          <button className='text-lg bg-blue-500 text-white py-2 rounded-lg mb-5 font-semibold shadow-lg mt-auto cursor-pointer' onClick={()=>navigate(`/seatbook/${bus._id}`,{state:{searchQuery: location.state?.searchQuery,buses:bus}})} >
+            Book seats
+          </button>
+        </div>
+      </motion.div>
+    ))
+  ) : (
+    /* 2. Show this if buses array is empty */
+    <div className='flex flex-col items-center justify-center bg-white p-10 rounded-lg shadow-md w-full sm:w-[1000px]'>
+       <p className='text-xl font-bold text-gray-400'>No buses found in this case</p>
+       <p className='text-gray-400'>Try changing your search filters or destination.</p>
+    </div>
+  )}
                   </div>
             </div>
 

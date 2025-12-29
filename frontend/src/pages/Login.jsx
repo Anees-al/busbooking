@@ -66,7 +66,7 @@ const Login = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}>
-               <motion.div className='flex flex-col   bg-white text-gray-500 rounded-lg w-auto border border-gray-400 mt-30 py-5 px-1 sm:px-7 shadow-lg' initial={{opacity:0}} whileInView={{opacity:1}} transition={{duration:16}}>
+               <motion.div className='flex flex-col   bg-white text-gray-500 rounded-lg w-auto border border-gray-400 mt-30 py-5 px-1 sm:px-7 shadow-lg' initial={{opacity:0}} whileInView={{opacity:1}} transition={{duration:1}}>
                    {login==='login'?<h1 className='text-center text-2xl font-semibold text-blue-600'>login</h1>:<h1 className='text-center text-2xl font-semibold text-blue-600'>sign up</h1>}
                   {login==='login'?  <p className='text-sm  font-semibold text-center'>Log in your account to book bus ticket</p>:<p className='text-sm  font-semibold text-center'>Create your account to book your bus ticket</p>}
                    <hr  className='mt-2 border border-gray-300 w-[300px] border-center ml-5'/>
