@@ -4,8 +4,9 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import userRoute from './routes/userRoute.js'
 import busRoute from './routes/busRoute.js'
-
+import cron from 'node-cron'
 import connectDb from './config/db.js';
+import busModel from './models/busModel.js';
 
 const app=express();
 dotenv.config()
