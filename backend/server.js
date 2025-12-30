@@ -6,7 +6,7 @@ import userRoute from './routes/userRoute.js'
 import busRoute from './routes/busRoute.js'
 import cron from 'node-cron'
 import connectDb from './config/db.js';
-import busModel from './models/busModel.js';
+import sheduleRoute from './routes/sheduleRoute.js';
 
 const app=express();
 dotenv.config()
@@ -28,6 +28,7 @@ app.use(cors({
 
 app.use('/api/user',userRoute)
 app.use('/api/bus',busRoute)
+app.use('/api/shedule',sheduleRoute)
 
 
 
