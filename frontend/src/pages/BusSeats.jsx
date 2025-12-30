@@ -11,22 +11,41 @@ const BusSeats = () => {
     const location = useLocation();
     const { BASE_URL } = useServer();
     const { id } = useParams();
+    const travelDate = location.state?.searchQuery?.date;
     
     // Initialize state with location data if available, otherwise null
     const [busesseat, setBuses] = useState(location.state?.buses || null);
+    const [sheduled,setSheduled]=useState([])
+    const [selectedSeats, setSelectedSeats] = useState([]);
+
+
+    const handleSeatClick = (seatNumber) => {
+    if (selectedSeats.includes(seatNumber)) {
+        // Remove if already selected
+        setSelectedSeats(selectedSeats.filter(s => s !== seatNumber));
+    } else {
+        // Add if not selected
+        setSelectedSeats([...selectedSeats, seatNumber]);
+    }
+};
 
     useEffect(() => {
         const fetchbusid = async () => {
             try {
-                const res = await axios.get(`${BASE_URL}api/bus/getbusbyid/${id}`);
-                setBuses(res.data.buses);
+                const busres = await axios.get(`${BASE_URL}api/bus/getbusbyid/${id}`);
+                setBuses(busres.data.buses);
+
+
+                const sheduleres=await axios.post(`${BASE_URL}api/shedule/create`,{busId:id,travelDate:travelDate})
+                setSheduled(sheduleres.data.schedule )
+                
             } catch (error) {
                 console.error("Fetch error:", error);
             }
         };
         // Fetch if we don't have data or if the ID changed
         fetchbusid();
-    }, [id, BASE_URL]);
+    }, [id, BASE_URL,travelDate]);
 
     // 1. LOADING GUARD - This is critical!
     if (!busesseat) {
@@ -63,10 +82,10 @@ const BusSeats = () => {
                 <motion.div className='flex flex-row p-10 rounded-lg' initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.4 }}>
                     <div className='bg-orange-500 h-auto sm:h-[200px] w-2 rounded-l-lg shadow-lg'></div>
 
-                    <div className='flex flex-col sm:flex-row bg-white w-auto gap-2 sm:w-[1400px] h-auto sm:h-[200px] p-8 justify-between rounded-r-lg shadow-lg'>
+                    <div className='flex flex-col sm:flex-row bg-blue-400 w-auto gap-2 sm:w-[1400px] h-auto sm:h-[200px] p-8 justify-between rounded-r-lg shadow-lg'>
                         <div className='flex flex-col gap-2'>
-                            <p className='text-lg font-semibold text-gray-400'>Depature ➔ Arrival</p>
-                            <p className='text-3xl font-bold text-gray-800'>
+                            <p className='text-lg font-semibold text-white'>Depature ➔ Arrival</p>
+                            <p className='text-3xl font-bold text-white'>
                                 {startTime} ➔ {endTime}
                             </p>
                             <p className='text-lg font-semibold text-orange-600 uppercase mt-1'>
@@ -80,16 +99,16 @@ const BusSeats = () => {
                         </div>
 
                         <div className='flex flex-col justify-center'>
-                            <p className='text-4xl font-bold text-gray-800'>₹ {finalPrice}</p>
+                            <p className='text-4xl font-bold text-white'>₹ {finalPrice}</p>
                             <p className='text-sm text-gray-400 font-bold'>per seat</p>
                         </div>
 
                         <div className='flex flex-col gap-1 text-right'>
                             <p className='text-3xl font-semibold text-orange-500'>
                                 {busesseat.busname} 
-                                <span className='text-sm text-gray-400 block'>{busesseat.busoperator}</span> 
+                                <span className='text-sm text-white block'>{busesseat.busoperator}</span> 
                             </p>
-                            <p className='text-lg text-gray-500 font-semibold'>
+                            <p className='text-lg texxt-white font-semibold'>
                                 {busesseat.bustype} | {busesseat.isAC ? 'AC' : 'NON-AC'}
                             </p>
                         </div>
@@ -98,27 +117,29 @@ const BusSeats = () => {
 
                 <div className='flex flex-col sm:flex-row p-10 justify-between gap-8'>
                     {/* SEAT SELECTION AREA */}
-                    <motion.div className='flex flex-col bg-white w-auto h-auto sm:w-[500px] sm:h-[600px] rounded-lg shadow-lg' initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.4 }}>
-                        <div className='flex justify-end p-5'>
-                            <p className='text-center p-5 border w-22 border-black font-black rounded-lg'>Driver</p>
-                        </div>
-                        <div className='flex flex-row justify-between w-full max-w-2xl mx-auto p-10 bg-gray-50 rounded-xl border border-gray-200'>
-                            <div className='grid grid-cols-2 gap-4'>
-                                {[...Array(14)].map((_, i) => (
-                                    <button key={i} className='sm:h-12 h-7 w-7 sm:w-12 flex items-center justify-center bg-white border-2 border-green-500 text-green-700 font-bold rounded-md shadow-md hover:bg-green-500 hover:text-white transition-all cursor-pointer'>
-                                        {i + 1}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className='grid grid-cols-3 gap-4'>
-                                {[...Array(21)].map((_, i) => (
-                                    <button key={i + 15} className='sm:h-12 h-7 w-7 sm:w-12 flex items-center justify-center bg-white border-2 border-green-500 text-green-700 font-bold rounded-md shadow-sm hover:bg-green-500 hover:text-white transition-all cursor-pointer'>
-                                        {i + 15}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </motion.div>
+                   <div className='grid grid-cols-4 gap-4 w-full max-w-md mx-auto p-5 bg-gray-50 rounded-xl border border-gray-200'>
+    {sheduled?.seats?.map((seat) => {
+        const isSelected = selectedSeats.includes(seat.seatNumber);
+        const isBooked = seat.isBooked;
+
+        return (
+            <button
+                key={seat._id}
+                disabled={isBooked}
+                onClick={() => handleSeatClick(seat.seatNumber)}
+                className={`h-12 w-12 flex items-center justify-center font-bold rounded-md shadow-sm transition-all
+                    ${isBooked 
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' // Already Booked
+                        : isSelected
+                            ? 'bg-orange-500 text-white border-2 border-orange-600' // User clicked this
+                            : 'bg-white border-2 border-green-500 text-green-700 hover:bg-green-100' // Available
+                    }`}
+            >
+                {seat.seatNumber}
+            </button>
+        );
+    })}
+</div>
 
                     {/* BOOK SUMMARY AREA */}
                     <motion.div className='flex flex-col bg-white w-auto sm:w-[700px] h-auto sm:h-[600px] rounded-lg shadow-lg p-10' initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.4 }}>
