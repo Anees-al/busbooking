@@ -5,9 +5,14 @@ import busimage from '../assets/volvobus.png';
 import axios from 'axios'
 import {toast} from 'react-toastify'
 import  {motion} from 'framer-motion'
+import { useNavigate } from 'react-router';
+import { useServer } from '../Context';
 const Login = () => {
 
     const [login,setlogin]=useState('login');
+    const navigate =useNavigate()
+    const{setUser}=useServer()
+
     const[formdata,setFormdata]=useState({
       fullname:'',
       email:'',
@@ -29,18 +34,28 @@ const Login = () => {
       e.preventDefault();
       try {
        let url= login==='login'?"http://localhost:3000/api/user/login":"http://localhost:3000/api/user/createuser" ;
+       console.log("📡 Sending request to:", url);
         const res=await axios.post(url,formdata);
-          
-        setFormdata({
-      fullname: "",
-      email: "",
-      phone:"",
+        console.log("Response from server:", res.data);
+        const userData = res.data.exisitingUser || res.data.user;
+        
+       if (userData) {
+            
+            // 1. Save to LocalStorage (This persists the login after refresh)
+            localStorage.setItem("userId", userData._id);
+            console.log("Verified Storage:", localStorage.getItem("userId"));
 
-      password: "",
-      confirmpassword:''
+            // 2. Update Context State (This makes the user appear in Nav/BusSeats immediately)
+            setUser(userData);
 
-      
-    });
+            toast.success(login === 'login' ? 'Login Successful' : 'Account Created');
+            
+            // 3. Clear the form
+            setFormdata({
+                fullname: "", email: "", phone: "", password: "", confirmpassword: ''
+            });
+            navigate('/')
+          }
 
     toast.success('successfully created')
       } catch (error) {

@@ -1,5 +1,7 @@
 import { useContext,createContext } from "react";
 import axios from "axios";
+import { useEffect } from "react";
+import { useState } from "react";
 
 
 const ApiContext=createContext();
@@ -8,15 +10,35 @@ const ApiContext=createContext();
 export const ApiProvider = ({ children }) => {
     // 1. Define your global base URL
     const BASE_URL = "http://localhost:3000/";
+    const [user,setUser]=useState(null);
 
     // 2. Create a configured axios instance
     const server = axios.create({
         baseURL: BASE_URL,
     });
+
+
+    useEffect(()=>{
+    const fetchuser=async()=>{
+        
+        try {
+            const savedId = localStorage.getItem("userId");
+            if (!savedId) return;
+            const res=await axios.get(`${BASE_URL}api/user/getuser/${savedId}`);
+
+            if(res.data.success){
+                setUser(res.data.user)
+            }
+        } catch (error) {
+            console.log('something error',error)
+        }
+    }
+    fetchuser()
+    },[BASE_URL])
   
 
     return(
-        <ApiContext.Provider value={{BASE_URL,server}}>
+        <ApiContext.Provider value={{BASE_URL,server,user,setUser}}>
             {children}
         </ApiContext.Provider>
     )

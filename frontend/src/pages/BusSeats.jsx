@@ -6,17 +6,68 @@ import { motion } from 'framer-motion'
 import { useServer } from '../Context'
 import { useParams, useLocation } from 'react-router-dom'
 import axios from 'axios'
+import {toast} from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const BusSeats = () => {
     const location = useLocation();
-    const { BASE_URL } = useServer();
+    const { BASE_URL,user } = useServer();
     const { id } = useParams();
     const travelDate = location.state?.searchQuery?.date;
+    const navigate=useNavigate()
     
     // Initialize state with location data if available, otherwise null
     const [busesseat, setBuses] = useState(location.state?.buses || null);
     const [sheduled,setSheduled]=useState([])
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const [booking,setbooking]=useState(false);
+
+
+
+
+
+    const handlebooking=async()=>{
+        if(selectedSeats.length===0){
+          alert("please fill atleast one seats")
+        }
+
+
+        if(!user ||!user._id){
+             alert("please login first")
+        }
+
+
+
+        setbooking(true)
+
+
+        const bookingData={
+            busId:id,
+            userId:user._id,
+            sheduledId:sheduled._id,
+            seats:selectedSeats,
+            travelDate:travelDate,
+
+        };
+            try {
+            const res=await axios.post(`${BASE_URL}api/booking/createbooking`,bookingData);
+            
+                   if (res.status === 200) {
+                toast.success("Booking Successful!");
+                
+                navigate('/'); 
+                   }
+        } catch (error) {
+            toast.error('somethinng error')
+        }
+    }
+
+            
+        
+
+
+
+
 
 
     const handleSeatClick = (seatNumber) => {
@@ -27,7 +78,7 @@ const BusSeats = () => {
         // Add if not selected
         setSelectedSeats([...selectedSeats, seatNumber]);
     }
-};
+  };
 
     useEffect(() => {
         const fetchbusid = async () => {
@@ -45,7 +96,17 @@ const BusSeats = () => {
         };
         // Fetch if we don't have data or if the ID changed
         fetchbusid();
-    }, [id, BASE_URL,travelDate]);
+    }, [id, BASE_URL]);
+
+
+    useEffect(() => {
+    if (user) {
+        console.log("✅ User fetched successfully from Mongoose:", user);
+        console.log("👤 User ID to be used for booking:", user._id);
+    } else {
+        console.log("❌ No user found. Please login.");
+    }
+}, [user]);
 
     // 1. LOADING GUARD - This is critical!
     if (!busesseat) {
@@ -62,15 +123,16 @@ const BusSeats = () => {
         ? busesseat.stops.find(s => s.stationname.toLowerCase().includes(location.state.searchQuery.destination.toLowerCase()))
         : busesseat.stops[busesseat.stops.length - 1];
 
-    // Use exact keys from your DB (Note: depaturetime typo)
+    
     const startTime = originStop?.depaturetime; 
     const endTime = destinationStop?.arrivaltime;
     const finalPrice = destinationStop?.pricefromorgin || 0;
+    const selectedseat=selectedSeats.length
 
     // Financial calculations
     const GST = finalPrice * (5 / 100);
     const TotalPrice = finalPrice + GST;
-    const bookedseats = ['L1', 'L2', 'L3']; // You can make this dynamic later
+    const bookedseats = ['L1', 'L2', 'L3']
 
     return (
         <div className='bg-gray-200'>
@@ -147,7 +209,7 @@ const BusSeats = () => {
                         <div className='flex flex-row gap-3 mt-10'>
                             <p className='text-lg font-semibold'>Selected seats:</p>
                             <div className='flex flex-row gap-3'>
-                                {bookedseats.map((seats, index) => (
+                                {selectedSeats.map((seats, index) => (
                                     <p key={index} className='text-sm text-white font-bold py-1 px-2 bg-green-400 rounded-lg shadow-lg shadow-gray-400'>{seats}</p>
                                 ))}
                             </div>
@@ -155,21 +217,21 @@ const BusSeats = () => {
 
                         <div className='flex flex-col mt-10'>
                             <h1 className='text-lg font-semibold'>Passenger Details</h1>
-                            <p className='font-bold text-gray-500'>Full name: Anees</p>
-                            <p className='font-bold text-gray-500'>Phone number: 0029767896357</p>
-                            <p className='font-bold text-gray-500'>Email: annfknk@gmail.com</p>
+                            <p className='font-bold text-gray-800'>Full name: <span className='text-gray-500'>{user.fullname}</span>  </p>
+                            <p className='font-bold text-gray-800'>Phone number: <span className='text-gray-500'>{user.phone}</span> </p>
+                            <p className='font-bold text-gray-800'>Email: <span className='text-gray-500'>{user.email}</span> </p>
                         </div>
 
                         <div className='flex flex-col text-gray-600 gap-1 font-semibold mt-10'>
                             <p>Ticket Fare: <span className='text-lg text-black font-bold'>{finalPrice}</span> </p>
                             <p>GST amount (5%): <span className='text-lg text-black font-bold'>{GST.toFixed(2)}</span></p>
                             <p>Total per ticket:<span className='text-lg text-black font-bold'>{TotalPrice.toFixed(2)}</span></p>
-                            <p>No of tickets: <span className='text-lg text-black font-bold'>{bookedseats.length}</span> </p>
-                            <p>Grand total: <span className='text-2xl text-red-500 font-bold'>{(TotalPrice * bookedseats.length).toFixed(2)}</span></p>
+                            <p>No of tickets: <span className='text-lg text-black font-bold'>{selectedseat}</span> </p>
+                            <p>Grand total: <span className='text-2xl text-red-500 font-bold'>{(TotalPrice * selectedseat).toFixed(2)}</span></p>
                         </div>
 
-                        <button className='text-center font-semibold text-xl mt-10 bg-orange-600 px-3 py-2 text-white rounded-lg shadow-lg cursor-pointer hover:bg-orange-700 hover:shadow-xl'>
-                            Proceed payment
+                        <button className='text-center font-semibold text-xl mt-10 bg-orange-600 px-3 py-2 text-white rounded-lg shadow-lg cursor-pointer hover:bg-orange-700 hover:shadow-xl' onClick={handlebooking} disabled={booking}>
+                            {booking ? "Processing..." : "Proceed payment"}
                         </button>
                     </motion.div>
                 </div>
