@@ -110,3 +110,15 @@ export const getBusById=async(req,res)=>{
         return res.status(400).json({message:error.message})
     }
 }
+
+
+
+
+export const getAllBuses=async(req,res)=>{
+    try {
+        const buses=await busModel.find({});
+        return res.status(200).json({message:'successfully fetched all the buses',buses})
+    } catch (error) {
+        return res.status(400).json(message.error);
+    }
+}

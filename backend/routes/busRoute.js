@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBus, getBusById, getBusByOperators, getBusByRoutes, searchBuses } from '../controllers/busControllers.js';
+import { createBus, getAllBuses, getBusById, getBusByOperators, getBusByRoutes, searchBuses } from '../controllers/busControllers.js';
 
 const router=express.Router();
 
@@ -9,4 +9,5 @@ router.get('/getroutebybus/:routePath',getBusByRoutes);
 router.get('/getbusesbyoperator/:busoperator',getBusByOperators);
 router.post('/search',searchBuses);
 router.get('/getbusbyid/:id',getBusById)
+router.get('/getallbuses',getAllBuses)
 export default router;

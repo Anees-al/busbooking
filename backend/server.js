@@ -4,9 +4,10 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import userRoute from './routes/userRoute.js'
 import busRoute from './routes/busRoute.js'
-import cron from 'node-cron'
+
 import connectDb from './config/db.js';
 import sheduleRoute from './routes/sheduleRoute.js';
+import bookingRoute from './routes/bookingRoute.js'
 
 const app=express();
 dotenv.config()
@@ -29,7 +30,7 @@ app.use(cors({
 app.use('/api/user',userRoute)
 app.use('/api/bus',busRoute)
 app.use('/api/shedule',sheduleRoute)
-
+app.use('/api/booking',bookingRoute)
 
 
 const port=process.env.PORT;

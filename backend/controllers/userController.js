@@ -77,3 +77,31 @@ export const login=async(req,res)=>{
         return res.status(400).json({message:error.message})
     }
 }
+
+
+export const getUserById=async(req,res)=>{
+    try {
+        const {id}=req.params;
+
+       const user=await userModel.findById(id).select('-password');
+    if(!user){
+        return res.status(400).json({message:'no user found'})
+    }
+
+    return res.status(200).json({success:true,message:'get user successfully',user});
+
+    } catch (error) {
+        return res.status(400).json({success:false,message:error.message})
+    }
+}
+
+
+
+export const getAllUser=async(req,res)=>{
+    try {
+        const users=await userModel.find({});
+        return res.status(200).json({message:'successfully fetched all users',users})
+    } catch (error) {
+        return res.status(400).json({message:error.message})
+    }
+}
