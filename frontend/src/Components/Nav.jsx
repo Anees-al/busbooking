@@ -3,10 +3,26 @@ import { HiMenuAlt3, HiX } from "react-icons/hi";
 import buslogo from '../assets/buslogo3.png'
 import { useNavigate } from 'react-router';
 import {motion} from 'framer-motion'
+import { useServer } from '../Context';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate=useNavigate()
+  const {user,BASE_URL,setUser}=useServer()
+
+
+  const logout=async()=>{
+    try {
+      const res=await axios.post(`${BASE_URL}api/user/logout`)
+      setUser(null)
+      navigate('/login')
+      toast.success('logout successfully')
+    } catch (error) {
+       toast.error('something error')
+    }
+  }
 
   return (
     <motion.nav className='bg-[#1b81e5] p-4 relative' initial={{y:-100,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:0.5}}>
@@ -19,13 +35,17 @@ const Nav = () => {
           <p className='cursor-pointer hover:text-[#FF2A00]'>Home</p>
           <p className='cursor-pointer hover:text-[#FF2A00]'>Routes</p>
           <p className='cursor-pointer hover:text-[#FF2A00]'>Support</p>
-          <p className='cursor-pointer hover:text-[#FF2A00]'>Bus</p> 
+          {user &&(
+            <p className='cursor-pointer hover:text-[#FF2A00]' onClick={()=>navigate(`/bookings/${user._id}`)}>My tickets</p> 
+          ) }
         </div>
 
         {/* LOGIN BUTTON & MOBILE ICON */}
-        <div className='flex items-center gap-4'>
-          <button className='px-4 py-1 bg-[#FF2A00] text-white font-bold rounded-lg cursor-pointer' onClick={()=>navigate('/login')}>Login</button>
+        <div className='flex items-center gap-4'>{
           
+         user ?( <button className='px-4 py-1 bg-[#FF2A00] text-white font-bold rounded-lg cursor-pointer' onClick={logout}>Logout</button>
+          ):( <button className='px-4 py-1 bg-[#FF2A00] text-white font-bold rounded-lg cursor-pointer' onClick={()=>navigate('/login')}>Login</button>
+          )}
           {/* HAMBURGER ICON (Visible only on Mobile) */}
           <button 
             className='md:hidden text-white cursor-pointer' 

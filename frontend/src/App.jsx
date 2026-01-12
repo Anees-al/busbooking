@@ -10,6 +10,7 @@ import Bookinglist from './pages/Bookinglist'
 import BuslistsAdmin from './pages/BuslistsAdmin'
 import UserListAdmin from './pages/UserListAdmin'
 import Bookings from './pages/Bookings'
+import BookingListForOpreators from './pages/BookingListForOpreators'
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
 <Route path='/buslisting' element={<BuslistsAdmin/>}/>
 <Route path='/userlisting' element={<UserListAdmin/>}/>
 <Route path='/bookings/:userId'  element={<Bookings/>}/>
+<Route path='/booking/:busId' element={<BookingListForOpreators/>}/>
       </Routes>
     
     </div>

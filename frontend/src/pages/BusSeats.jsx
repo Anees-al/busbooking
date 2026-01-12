@@ -55,7 +55,7 @@ const BusSeats = () => {
                    if (res.status === 200) {
                 toast.success("Booking Successful!");
                 
-                navigate('/'); 
+                navigate(`/bookings/${user._id}`); 
                    }
         } catch (error) {
             toast.error('somethinng error')
