@@ -79,3 +79,15 @@ export const getUserBooking=async(req,res)=>{
         return res.status(400).json(error)
     }
 }
+
+
+
+export const getBusBooking=async(req,res)=>{
+    try {
+        const {busId}=req.params;
+        const booking=await bookingModel.find({busId}).populate('userId').populate('busId');
+        return res.status(200).json({message:'success',booking,totalbookings:booking.length})
+    } catch (error) {
+         return res.status(400).json(error)
+    }
+}

@@ -34,7 +34,12 @@ export const createUser=async(req,res)=>{
       process.env. JWT_SECRET,
       { expiresIn: "1d" }
     );
-//save the user to database
+    res.cookie('token',token,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV === 'production',
+        sameSite:process.env.NODE_ENV === 'production' ?'none':'strict',
+        maxAge:7*24*60*60*1000
+    })
 
     await user.save();
     return res.status(200).json({message:'succefully user created',user,token})
@@ -72,7 +77,34 @@ export const login=async(req,res)=>{
     );
 
 
+    res.cookie('token',token,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV === 'production',
+        sameSite:process.env.NODE_ENV === 'production' ?'none':'strict',
+        maxAge:7*24*60*60*1000
+    })
+
+
+
         return res.status(200).json({message:'successfully logined',exisitingUser,token})
+    } catch (error) {
+        return res.status(400).json({message:error.message})
+    }
+}
+
+
+
+export const logout=async(req,res)=>{
+    try {
+        res.clearCookie('token',{
+            httpOnly:true,
+        secure:process.env.NODE_ENV === 'production',
+        sameSite:process.env.NODE_ENV === 'production' ?'none':'strict',
+        
+        })
+
+
+        return res.status(200).json({message:'successfully logout'})
     } catch (error) {
         return res.status(400).json({message:error.message})
     }
