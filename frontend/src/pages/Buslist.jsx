@@ -21,7 +21,7 @@ const Buslist = () => {
     console.log("Navigation State:", location.state);
    
 useEffect(() => {
-        // Only fetch from API if we DON'T have search results from the previous page
+        
         if (!location.state?.buses) {
             const fetchBuses = async () => {
                 try {
@@ -34,7 +34,7 @@ useEffect(() => {
 
                     if (url) {
                         const res = await server.get(url);
-                        // Make sure this matches your backend response key (res.data.buses or res.data.data)
+                        
                         setBus(res.data.buses || res.data.data);
                     }
                 } catch (error) {

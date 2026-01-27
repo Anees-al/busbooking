@@ -27,7 +27,8 @@ export const ApiProvider = ({ children }) => {
             const res=await axios.get(`${BASE_URL}api/user/getuser/${savedId}`);
 
             if(res.data.success){
-                setUser(res.data.user)
+                setUser(res.data.users)
+                
             }
         } catch (error) {
             console.log('something error',error)
