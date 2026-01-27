@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react(),tailwindcss()],
   
     server: {
-    host: '0.0.0.0', // This tells Vite to listen to all devices on your Wi-Fi
+    host: '0.0.0.0',
     port: 5173
   }
   
