@@ -1,4 +1,5 @@
 
+import { now } from "mongoose";
 import busModel from "../models/busModel.js"
 
 export const createBus=async(req,res)=>{
@@ -18,8 +19,10 @@ export const getBusByRoutes=async(req,res)=>{
     
     try {
         const { routePath } = req.params;
+        const today = new Date().toLocaleString('en-US', { weekday: 'long' });
         const buses = await busModel.find({ 
-            routePath: { $regex: new RegExp(routePath, "i") } 
+            routePath: { $regex: new RegExp(routePath, "i") } ,
+            daysAvailable: { $in: [today] }
         });
         return res.status(200).json({message:'succefully fetch all buses in the route',buses})
     } catch (error) {
@@ -43,7 +46,7 @@ export const getBusByOperators=async(req,res)=>{
 
 
 
-// Import your Model (The blueprint of your database collection)
+
 
 export const searchBuses = async (req, res) => {
     try {
@@ -57,30 +60,28 @@ export const searchBuses = async (req, res) => {
             });
         }
 
-        // 2. Identify the Day of the Week from the selected date
-        // Example: If user picks 2025-12-28, this becomes "Sunday"
         const dayName = new Date(date).toLocaleDateString("en-US", { weekday: 'long' });
 
-        // 3. Build the Query
+        
         const query = {
             origin: { $regex: new RegExp(from, "i") },
             $or: [
                 { destination: { $regex: new RegExp(destination, "i") } },
                 { "stops.stationname": { $regex: new RegExp(destination, "i") } }
             ],
-            // Check if the bus operates on this specific day of the week
+            
             daysAvailable: dayName 
         };
 
-        // Filter by bus type (sleeper, seater, etc.) if category is selected
+
         if (category && category !== "All") {
             query.bustype = category;
         }
 
-        // 4. Database Query
+
         const foundBuses = await busModel.find(query);
 
-        // 5. Response
+        
         return res.status(200).json({
             success: true,
             day: dayName, // Informative for the frontend

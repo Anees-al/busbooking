@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 export const createbooking=async(req,res)=>{
     try {
         const {busId,userId,sheduledId,seats,travelDate}=req.body;
+        
 
 
 
@@ -89,5 +90,15 @@ export const getBusBooking=async(req,res)=>{
         return res.status(200).json({message:'success',booking,totalbookings:booking.length})
     } catch (error) {
          return res.status(400).json(error)
+    }
+}
+
+
+
+export const verifybooking=async(req,res)=>{
+    try {
+       const {busId}=req.params; 
+    } catch (error) {
+        
     }
 }
