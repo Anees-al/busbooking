@@ -19,7 +19,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
     origin: ["http://localhost:5173",         
-      "http://192.168.1.3:5173"], 
+      "https://anees-al.github.io"], 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }
