@@ -50,7 +50,7 @@ const BusSeats = () => {
 
         };
             try {
-            const res=await axios.post(`${BASE_URL}api/booking/createbooking`,bookingData);
+            const res=await axios.post(`${BASE_URL}/api/booking/createbooking`,bookingData);
             
                    if (res.status === 200) {
                 toast.success("Booking Successful!");
@@ -83,11 +83,11 @@ const BusSeats = () => {
     useEffect(() => {
         const fetchbusid = async () => {
             try {
-                const busres = await axios.get(`${BASE_URL}api/bus/getbusbyid/${id}`);
+                const busres = await axios.get(`${BASE_URL}/api/bus/getbusbyid/${id}`);
                 setBuses(busres.data.buses);
 
 
-                const sheduleres=await axios.post(`${BASE_URL}api/shedule/create`,{busId:id,travelDate:travelDate})
+                const sheduleres=await axios.post(`${BASE_URL}/api/shedule/create`,{busId:id,travelDate:travelDate})
                 setSheduled(sheduleres.data.schedule )
                 
             } catch (error) {

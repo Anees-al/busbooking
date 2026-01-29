@@ -9,13 +9,15 @@ const ApiContext=createContext();
 
 export const ApiProvider = ({ children }) => {
     // 1. Define your global base URL
-    const BASE_URL = "http://localhost:3000/";
+    const BASE_URL = import.meta.env.VITE_BASE_URL 
     const [user,setUser]=useState(null);
 
     // 2. Create a configured axios instance
     const server = axios.create({
         baseURL: BASE_URL,
     });
+    console.log(BASE_URL)
+    
 
 
     useEffect(()=>{
@@ -28,6 +30,7 @@ export const ApiProvider = ({ children }) => {
 
             if(res.data.success){
                 setUser(res.data.users)
+                
                 
             }
         } catch (error) {

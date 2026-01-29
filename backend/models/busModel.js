@@ -38,11 +38,11 @@ const busSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Auto-generate routePath for searching
-busSchema.pre('save', function(next) {
+busSchema.pre('save', function() {
     if (this.origin && this.destination) {
         this.routePath = `${this.origin} to ${this.destination}`;
     }
-    next();
+    
 });
 
 const busModel = mongoose.models.bus || mongoose.model('bus', busSchema);

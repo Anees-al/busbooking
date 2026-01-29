@@ -43,7 +43,7 @@ const Home = () => {
            <div className='flex flex-row gap-10'>
          <div className='flex flex-row gap-10 mt-10'>
               <div className='flex flex-row px-6 py-1 bg-white w-[300px] h-[100px] justify-center items-center shadow-lg '>
-                <img src="" alt="" />
+                
                 <div>
                     <p className='text-xl font-bold'>Trusted service</p>
                     <p className='text-sm text-semibold text-gray-500'>100% Reliable Operators</p>

@@ -1,12 +1,12 @@
 
-import { now } from "mongoose";
+
 import busModel from "../models/busModel.js"
 
 export const createBus=async(req,res)=>{
     try {
         const newBus=new busModel(req.body);
         await newBus.save()
-        return res.status(200).json({message:'successfully created the bus',newBus});
+        return res.status(201).json({message:'successfully created the bus',newBus});
 
     } catch (error) {
         return res.status(400).json({message:error.message});

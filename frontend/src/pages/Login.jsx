@@ -11,7 +11,8 @@ const Login = () => {
 
     const [login,setlogin]=useState('login');
     const navigate =useNavigate()
-    const{setUser}=useServer()
+    const{setUser,BASE_URL}=useServer()
+    
 
     const[formdata,setFormdata]=useState({
       fullname:'',
@@ -33,7 +34,7 @@ const Login = () => {
     const handleSubmit=async(e)=>{
       e.preventDefault();
       try {
-       let url= login==='login'?"http://localhost:3000/api/user/login":"http://localhost:3000/api/user/createuser" ;
+       let url= login==='login'?`${BASE_URL}/api/user/login`:`${BASE_URL}/api/user/createuser` ;
        console.log("📡 Sending request to:", url);
         const res=await axios.post(url,formdata);
         console.log("Response from server:", res.data);

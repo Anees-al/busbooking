@@ -13,7 +13,7 @@ const Bookinglist = () => {
     useEffect(()=>{
           const fetchbookings=async()=>{
             try {
-                const res=await axios.get(`${BASE_URL}api/booking/getbooking`);
+                const res=await axios.get(`${BASE_URL}/api/booking/getbooking`);
                 setLists(res.data.bookings);
                 toast.success('succesfully fetch')
             } catch (error) {

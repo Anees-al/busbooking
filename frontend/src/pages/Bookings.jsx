@@ -14,7 +14,7 @@ const Bookings = () => {
     useEffect(()=>{
       const fetchbookings=async()=>{
         try {
-            const res=await axios.get(`${BASE_URL}api/booking/getbookingtouser/${userId}`);
+            const res=await axios.get(`${BASE_URL}/api/booking/getbookingtouser/${userId}`);
             setBooking(res.data.booking)
             console.log(res.data.booking)
         } catch (error) {

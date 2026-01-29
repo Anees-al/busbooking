@@ -12,7 +12,7 @@ const BookingListForOpreators = () => {
      useEffect(()=>{
       const fetchBooking=async()=>{
         try {
-        const res=await axios.get(`${BASE_URL}api/booking/getbookingtobus/${busId}`);
+        const res=await axios.get(`${BASE_URL}/api/booking/getbookingtobus/${busId}`);
         setBooking(res.data.booking);
         console.log(res.data.booking)
         console.log(today)
