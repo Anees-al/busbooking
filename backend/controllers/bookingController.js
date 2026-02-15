@@ -1,6 +1,7 @@
 import bookingModel from "../models/bookingModel.js";
 import sheduleModel from "../models/scheduleModel.js";
 import mongoose from 'mongoose'
+import { instance } from "../server.js";
 
 export const createbooking=async(req,res)=>{
     try {
@@ -69,6 +70,25 @@ export const getAllBooking=async(req,res)=>{
 }
 
 
+export const processPayment=async(req,res)=>{
+    try {
+        const options={
+            amount:Number(req.body.amount*100),
+            currency:"INR"
+        }
+        const order =await instance.orders.create(options)
+        res.status(200).json({message:'succefully order',order})
+    } catch (error) {
+        res.status(400).json({message:error.message})
+    }
+}
+
+
+export const getKey=async(req,res)=>{
+    return res.status(200).json({
+        key:process.env.RAZORPAY_API_KEY
+    })
+}
 
 export const getUserBooking=async(req,res)=>{
     try {
