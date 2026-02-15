@@ -12,7 +12,7 @@ const BuslistsAdmin = () => {
     useEffect(()=>{
         const fetchbuses=async()=>{
             try {
-                const res=await axios.get(`${BASE_URL}api/bus/getallbuses`);
+                const res=await axios.get(`${BASE_URL}/api/bus/getallbuses`);
                 setBuse(res.data.buses);
                 toast.success('successfully fetched')
             } catch (error) {

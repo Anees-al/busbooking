@@ -14,7 +14,7 @@ const UserListAdmin = () => {
     useEffect(()=>{
    const fetchUsers=async()=>{
     try {
-        const res=await axios.get(`${BASE_URL}api/user/getallusers`);
+        const res=await axios.get(`${BASE_URL}/api/user/getallusers`);
         setUsers(res.data.users);
         toast.success('successfully fetched user data')
     } catch (error) {

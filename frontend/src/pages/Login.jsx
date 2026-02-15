@@ -11,7 +11,7 @@ const Login = () => {
 
     const [login,setlogin]=useState('login');
     const navigate =useNavigate()
-    const{setUser,BASE_URL}=useServer()
+    const{setUser,BASE_URL,user}=useServer()
     
 
     const[formdata,setFormdata]=useState({
@@ -55,7 +55,7 @@ const Login = () => {
             setFormdata({
                 fullname: "", email: "", phone: "", password: "", confirmpassword: ''
             });
-            navigate('/')
+           userData.role==='admin'?navigate('/admin'):navigate('/')
           }
 
     toast.success('successfully created')

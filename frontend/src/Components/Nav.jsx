@@ -15,7 +15,7 @@ const Nav = () => {
 
   const logout=async()=>{
     try {
-      const res=await axios.post(`${BASE_URL}api/user/logout`)
+      const res=await axios.post(`${BASE_URL}/api/user/logout`)
       setUser(null)
       navigate('/login')
       toast.success('logout successfully')
