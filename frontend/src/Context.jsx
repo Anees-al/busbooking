@@ -5,7 +5,7 @@ const ApiContext = createContext();
 
 export const ApiProvider = ({ children }) => {
 
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL = "https://busbooking-at1s.onrender.com";
 
   const [user, setUser] = useState(null);
 
