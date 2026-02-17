@@ -13,7 +13,7 @@ export const createUser=async(req,res)=>{
     }
 
 //check the user is already in the database
-    const exisitingUser=await userModel.findOne(email);
+    const exisitingUser=await userModel.findOne({email});
 
     if(exisitingUser){
         return res.status(400).json({message:'user already there'})
